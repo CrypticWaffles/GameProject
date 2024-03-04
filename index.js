@@ -14,6 +14,23 @@ bgImage.onload = function () {
 }
 bgImage.src = "images/Bigbackground.png";
 
+//Edges
+// Background Image
+var edgReady = false;
+var edgImage = new Image();
+edgImage.onload = function () {
+    edgReady = true;
+}
+//edgImage.src = "images/.png";
+
+// Background Image
+var edg2Ready = false;
+var edg2Image = new Image();
+edg2Image.onload = function () {
+    edg2Ready = true;
+}
+//edg2Image.src = "images/.png";
+
 // Hero Image
 var heroReady = false;
 var heroImage = new Image();
@@ -44,8 +61,15 @@ var main = function () {
 
 var render = function () {
     if (bgReady) {
-        console.log('here2');
         ctx.drawImage(bgImage, 0, 0);
+    }
+    if (edgReady) {
+        ctx.drawImage(edg, 0, 0);
+        ctx.drawImage(edg, 0, 968);
+    }
+    if (edg2Ready) {
+        ctx.drawImage(edg2, 0, 0);
+        ctx.drawImage(edg, 968, 0);
     }
     if (heroReady) {
         ctx.drawImage(heroImage, hero.x, hero.y);
