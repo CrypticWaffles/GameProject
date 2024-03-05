@@ -106,33 +106,41 @@ var keysDown = {}; //object were we properties when keys go down
 // is down.  In our game loop, we will move the hero image if when
 // we go thru render, a key is down
 
-addEventListener("keydown", function (e) {
-    console.log(e.keyCode + " down")
-    keysDown[e.keyCode] = true;
+addEventListener("keydown", function(e) {
+    if (e.keyCode === 16) { // Shift key
+        isShiftPressed = true;
+    } else {
+        keysDown[e.keyCode] = true;
+    }
 }, false);
 
-addEventListener("keyup", function (e) {
-    console.log(e.keyCode + " up")
-    delete keysDown[e.keyCode];
+addEventListener("keyup", function(e) {
+    if (e.keyCode === 16) { // Shift key
+        isShiftPressed = false;
+    } else {
+        delete keysDown[e.keyCode];
+    }
 }, false);
 
 function checkKey(keyCode) {
     return keyCode in keysDown;
 }
-
+var isShiftPressed = false; //for sprint action
 // Update game objects
 var update = function (modifier) {
+    var speedModifier = isShiftPressed ? 3 : 1;
+
     if ((checkKey(38) || checkKey(87)) && hero.y > 32+4) { //  holding up keys
-        hero.y -= hero.speed * modifier;
+        hero.y -= hero.speed * modifier * speedModifier;
     }
     if ((checkKey(40) || checkKey(83)) && hero.y < canvas.height - (64 + 6)) { //  holding down keys
-        hero.y += hero.speed * modifier;
+        hero.y += hero.speed * modifier * speedModifier;
     }
     if ((checkKey(37) || checkKey(65)) && hero.x > (32+4)) { // holding left keys
-        hero.x -= hero.speed * modifier;
+        hero.x -= hero.speed * modifier * speedModifier;
     }
     if ((checkKey(39) || checkKey(68)) && hero.x < canvas.width - (64 + 6)) { // holding right keys
-        hero.x += hero.speed * modifier;
+        hero.x += hero.speed * modifier * speedModifier;
     }
 
     // Are they touching?
