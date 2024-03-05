@@ -116,34 +116,22 @@ addEventListener("keyup", function (e) {
     delete keysDown[e.keyCode];
 }, false);
 
-function Up() {
-    return (38 in keysDown || 87 in keysDown); //up-arrow or W
-}
-
-function Down() {
-    return (40 in keysDown || 83 in keysDown); //down-arrow or S
-}
-
-function Left() {
-    return (37 in keysDown || 65 in keysDown); //left-arrow or A
-}
-
-function Right() {
-    return (39 in keysDown || 68 in keysDown); //right-arrow or D
+function checkKey(keyCode) {
+    return keyCode in keysDown;
 }
 
 // Update game objects
 var update = function (modifier) {
-    if (Up() && hero.y > 32+4) { //  holding up keys
+    if ((checkKey(38) || checkKey(87)) && hero.y > 32+4) { //  holding up keys
         hero.y -= hero.speed * modifier;
     }
-    if (Down() && hero.y < canvas.height - (64 + 6)) { //  holding down keys
+    if ((checkKey(40) || checkKey(83)) && hero.y < canvas.height - (64 + 6)) { //  holding down keys
         hero.y += hero.speed * modifier;
     }
-    if (Left() && hero.x > (32+4)) { // holding left keys
+    if ((checkKey(37) || checkKey(65)) && hero.x > (32+4)) { // holding left keys
         hero.x -= hero.speed * modifier;
     }
-    if (Right() && hero.x < canvas.width - (64 + 6)) { // holding right keys
+    if ((checkKey(39) || checkKey(68)) && hero.x < canvas.width - (64 + 6)) { // holding right keys
         hero.x += hero.speed * modifier;
     }
 
