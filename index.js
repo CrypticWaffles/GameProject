@@ -1,51 +1,12 @@
-// Canvas creation
-var canvas = document.createElement("canvas");
-var ctx = canvas.getContext("2d");
-canvas.width = 1000;
-canvas.height = 1000;
-document.body.appendChild(canvas);
+import * as setup from "./setup.js";
 
-// Images
-// Background Image
-var bgReady = false;
-var bgImage = new Image();
-bgImage.onload = function () {
-    bgReady = true;
-}
-bgImage.src = "images/Bigbackground.png";
-
-//Edges
-// Background Image
-var edgReady = false;
-var edgImage = new Image();
-edgImage.onload = function () {
-    edgReady = true;
-}
-//edgImage.src = "images/.png";
-
-// Background Image
-var edg2Ready = false;
-var edg2Image = new Image();
-edg2Image.onload = function () {
-    edg2Ready = true;
-}
-//edg2Image.src = "images/.png";
-
-// Hero Image
-var heroReady = false;
-var heroImage = new Image();
-heroImage.onload = function () {
-    heroReady = true;
-}
-heroImage.src = "images/hero.png";
-
-// Monster image
-var monsterReady = false;
-var monsterImage = new Image();
-monsterImage.onload = function () {
-    monsterReady = true;
-}
-monsterImage.src = "images/monster.png";
+var {
+    canvas, ctx,
+    bgReady, bgImage,
+    edgReady, edgImage, edg2Ready, edg2Image,
+    heroReady, heroImage,
+    monsterReady, monsterImage
+  } = setup;
 
 // The main game loop
 var main = function () {
