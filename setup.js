@@ -11,6 +11,14 @@ var ctx = canvas.getContext("2d");
 canvas.width = 1000;
 canvas.height = 1000;
 document.body.appendChild(canvas);
+/* Canvas Coordinates Cheat Sheet
+ * ------------------------------
+ * Top-left: (0, 0)
+ * Bottom-left: (0, 1000)
+ * Top-right: (1000, 0)
+ * Bottom-right: (1000, 1000)
+ * Center: (500, 500)
+ */
 
 // Images
 // Background Image

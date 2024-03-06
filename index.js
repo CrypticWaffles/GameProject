@@ -19,7 +19,6 @@ var main = function () {
     requestAnimationFrame(main);
 };
 
-
 var render = function () {
     if (bgReady) {
         ctx.drawImage(bgImage, 0, 0);
@@ -52,13 +51,91 @@ var hero = {
     speed: 256, // movement in pixels per second
     x: 0,  // where on the canvas are they?
     y: 0  // where on the canvas are they?
+}
+
+var randomPoint = { //a random point that the monster will move towards
+    x: (Math.random() * 1000),
+    y: (Math.random() * 1000)
 };
+
 var monster = {
-// for this version, the monster does not move, so just and x and y
-    x: 0,
-    y: 0
-};
+    speed: 256, // movement in pixels per second
+    x: 0,  // where on the canvas are they?
+    y: 0,  // where on the canvas are they?
+    dx: 0, // x distance from target
+    dy: 0, // y distance from target
+    target: {
+        x: Math.round((Math.random() * 1000)),
+        y: Math.round((Math.random() * 1000))
+    },
+
+    moveUp: function () {
+        this.y -= 2;
+    },
+    moveDown: function () {
+        this.y += 2;
+    },
+    moveLeft: function () {
+        this.x -= 2;
+    },
+    moveRight: function () {
+        this.x += 2;
+    },
+    newTarget: function () {
+        this.target.x = Math.round((Math.random() * 1000));
+        this.target.y = Math.round((Math.random() * 1000));
+    },
+    calcDistance: function (){ //how far the monster has to move to reach the random point
+        this.dx = this.target.x - this.x;
+        this.dy = this.target.y - this.y;
+    }
+}
 var monstersCaught = 0;
+
+function moveHorizontal(dx, dy) {
+    // If moving horizontally is shorter or equal and distance is greater than 30
+    if (monster.target.x < monster.x) {
+        monster.moveLeft();
+    } else if (monster.target.x > monster.x) {
+        monster.moveRight();
+    }
+    monster.calcDistance();
+}
+
+function moveVertical(dx, dy) {
+    // If moving vertically is shorter and distance is greater than 30
+    if (monster.target.y < monster.y) {
+        monster.moveUp();
+    } else if (monster.target.y > monster.y) {
+        monster.moveDown();
+    }
+    monster.calcDistance();
+}
+
+function moveMonster(){
+    const dx = Math.abs(Math.round(monster.target.x - monster.x));
+    const dy = Math.abs(Math.round(monster.target.y - monster.y));
+
+    if(dx <= 3 && dy <= 3){
+        // If the monster is within 30 units of its target, respawn or set a new target
+        monster.newTarget();
+        return;
+    }else{
+        if(dx<=dy && dx>3){
+            moveHorizontal(dx, dy);
+        }
+        else if (dx>dy && dy<=3){
+            moveHorizontal(dx, dy);
+        }
+        else if(dx<=dy && dx<=3){
+            moveVertical(dx, dy);
+        }
+        else if(dy<=dx && dy>3){
+            moveVertical(dx, dy);
+        }
+    }
+}
+
 
 // Handle keyboard controls
 var keysDown = {}; //object were we properties when keys go down
@@ -83,26 +160,33 @@ addEventListener("keyup", function(e) {
     }
 }, false);
 
-function checkKey(keyCode) {
-    return keyCode in keysDown;
-}
+//to simplify update function/make more readable
+function checkKey(keyCode) { return keyCode in keysDown; };
+function keyUp(){ return (checkKey(38) || checkKey(87)); };
+function keyDown(){ return (checkKey(40) || checkKey(83)); };
+function keyLeft(){ return (checkKey(37) || checkKey(65)); };
+function keyRight(){ return (checkKey(39) || checkKey(68)); };
+
 var isShiftPressed = false; //for sprint action
 // Update game objects
 var update = function (modifier) {
-    var speedModifier = isShiftPressed ? 3 : 1;
+    var speedModifier = isShiftPressed ? 3 : 1; //if shift is pressed then equal 3, else equal 1
+    var heroMults = hero.speed * modifier * speedModifier;
 
-    if ((checkKey(38) || checkKey(87)) && hero.y > 32+4) { //  holding up keys
-        hero.y -= hero.speed * modifier * speedModifier;
+    if (keyUp() && hero.y > 32+4) { //  holding up keys
+        hero.y -= heroMults;
     }
-    if ((checkKey(40) || checkKey(83)) && hero.y < canvas.height - (64 + 6)) { //  holding down keys
-        hero.y += hero.speed * modifier * speedModifier;
+    if (keyDown() && hero.y < canvas.height - (64 + 6)) { //  holding down keys
+        hero.y += heroMults;
     }
-    if ((checkKey(37) || checkKey(65)) && hero.x > (32+4)) { // holding left keys
-        hero.x -= hero.speed * modifier * speedModifier;
+    if (keyLeft() && hero.x > (32+4)) { // holding left keys
+        hero.x -= heroMults;
     }
-    if ((checkKey(39) || checkKey(68)) && hero.x < canvas.width - (64 + 6)) { // holding right keys
-        hero.x += hero.speed * modifier * speedModifier;
+    if (keyRight() && hero.x < canvas.width - (64 + 6)) { // holding right keys
+        hero.x += heroMults;
     }
+
+    moveMonster();
 
     // Are they touching?
     if (
