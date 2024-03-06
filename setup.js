@@ -24,7 +24,7 @@ document.body.appendChild(canvas);
 // Background Image
 var bgReady = true;
 var bgImage = new Image();
-bgImage.src = "images/Bigbackground.png";
+bgImage.src = "images/SpaceBG.png";
 
 //Edges
 // Background Image
@@ -33,7 +33,7 @@ var edgImage = new Image();
 edgImage.onload = function () {
     edgReady = true;
 }
-//edgImage.src = "images/.png";
+//edgImage.src = "images/border1.png";
 
 // Background Image
 var edg2Ready = false;
