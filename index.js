@@ -7,7 +7,8 @@ var {
     bgReady, bgImage,
     edgReady, edgImage, edg2Ready, edg2Image,
     heroReady, heroImage,
-    monsterReady, monsterImage
+    monsterReady, monsterImage,
+    targetReady, targetImage
 } = setup;
 
 var {
@@ -42,6 +43,9 @@ var render = function () {
     }
     if (monsterReady) {
         ctx.drawImage(monsterImage, monster.x, monster.y);
+    }
+    if (targetReady) {
+        ctx.drawImage(targetImage, monster.target.x, monster.target.y);
     }
 
     // Score

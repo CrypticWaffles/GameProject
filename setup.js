@@ -53,10 +53,16 @@ var monsterReady = true;
 var monsterImage = new Image();
 monsterImage.src = "images/monster.png";
 
+// Target image
+var targetReady = true;
+var targetImage = new Image();
+targetImage.src = "images/target.png";
+
 export { 
     canvas, ctx,
     bgReady, bgImage,
     edgReady, edgImage, edg2Ready, edg2Image,
     heroReady, heroImage,
-    monsterReady, monsterImage
+    monsterReady, monsterImage,
+    targetReady, targetImage
 };
