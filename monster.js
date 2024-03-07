@@ -8,6 +8,7 @@ var monster = {
         x: Math.round((Math.random() * 1000)),
         y: Math.round((Math.random() * 1000))
     },
+    targetsLost: 0,
 
     moveUp: function () {
         this.y -= 2;
@@ -24,6 +25,9 @@ var monster = {
     newTarget: function () {
         this.target.x = Math.round((Math.random() * 1000));
         this.target.y = Math.round((Math.random() * 1000));
+        var audio = new Audio('sounds/click.mp3');
+        audio.play();
+        this.targetsLost++;
     },
     calcDistance: function (){ //how far the monster has to move to reach the random point
         this.dx = this.target.x - this.x;

@@ -26,6 +26,9 @@ var main = function () {
     requestAnimationFrame(main);
 };
 
+var timer = false;
+var count = 60;
+
 var render = function () {
     if (bgReady) {
         ctx.drawImage(bgImage, 0, 0);
@@ -49,18 +52,55 @@ var render = function () {
     }
 
     // Score
-    ctx.fillStyle = "rgb(250, 250, 250)";
+    ctx.fillStyle = "rgb(0, 250, 0)";
     ctx.font = "24px Helvetica";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+    ctx.fillText("Captures: " + monstersCaught, 32, 32);
+
+    // Score
+    ctx.fillStyle = "rgb(250, 0, 0)";
+    ctx.font = "24px Helvetica";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("Targets Lost: " + monster.targetsLost, 32, 64);
+
+    //logic for the timer
+    if(monster.targetsLost > monstersCaught){ //activates if hero is losing
+        timer = true;
+    }else{
+        timer = false;
+    }
+    if(timer){ //render countdown
+        ctx.fillStyle = "rgb(250, 250, 0)";
+        ctx.font = "24px Helvetica";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        ctx.fillText(`Countdown: ${count}`, 32, 96);
+    }
 }
+
+//timer logic
+function sixtysec() {
+    var countdown = setInterval(function() {
+        if(timer){
+            count--;
+        }else{
+            count = 60;
+        }
+        if (count <= 0) {
+            clearInterval(countdown);
+            //>>>>>gameover<<<<<
+        }
+    }, 1000);
+}
+window.addEventListener('load', (event) => {sixtysec();});
 
 // Game objects
 var hero = {
     speed: 256, // movement in pixels per second
     x: 0,  // where on the canvas are they?
-    y: 0  // where on the canvas are they?
+    y: 0,  // where on the canvas are they?
 }
 var monstersCaught = 0;
 
@@ -122,6 +162,8 @@ var update = function (modifier) {
         && hero.y <= (monster.y + 32)
         && monster.y <= (hero.y + 32)
     ) {
+        var audio = new Audio('sounds/boop.mp3');
+        audio.play();
         ++monstersCaught; // keep track of our “score”
         reset(); // start a new cycle
     }
