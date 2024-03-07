@@ -46,7 +46,7 @@ edg2Image.onload = function () {
 // Hero Image
 var heroReady = true;
 var heroImage = new Image();
-heroImage.src = "images/hero.png";
+heroImage.src = "images/character/1.png";
 
 // Monster image
 var monsterReady = true;

@@ -33,6 +33,17 @@ var timer = false; //used in the countdown timer
 var count = 60; //the countdown itself
 var a = true;
 
+function flipImage(image, ctx, flipH, flipV) {
+    var scaleH = flipH ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
+        scaleV = flipV ? -1 : 1, // Set verical scale to -1 if flip vertical
+        posX = width * -1 // Set x position to -100% if flip horizontal 
+    
+    ctx.save(); // Save the current state
+    ctx.scale(-1, 1); // Set scale to flip the image
+    ctx.drawImage(img, -32, 0, 32, 32); // draw the image
+    ctx.restore(); // Restore the last saved state
+};
+
 var render = function () {
     if (bgReady) {
         ctx.drawImage(bgImage, 0, 0);
@@ -113,7 +124,7 @@ function flashover(){
 }
 
 //timer logic
-function sixtysec() {
+function intervals() {
     var countdown = setInterval(function() {
         if(timer){
             count--;
@@ -125,14 +136,32 @@ function sixtysec() {
             stopgame = true;
         }
     }, 1000);
+
+    var spriteFrame = setInterval(function() {
+        if(!noKeysPressed()){
+            hero.updateSprite();
+        }else{
+            
+        }
+    }, 250);
 }
-window.addEventListener('load', (event) => {sixtysec(); });
+window.addEventListener('load', (event) => {intervals(); });
 
 // Game objects
 var hero = {
     speed: 256, // movement in pixels per second
     x: 0,  // where on the canvas are they?
     y: 0,  // where on the canvas are they?
+    image: 1,
+    updateSprite: function () {
+        heroImage.src = `images/character/${this.image}.png`;
+        console.log(`images/character/${this.image}.png`)
+        if(this.image < 8){
+            this.image++;
+        }else{
+            this.image = 1;
+        }
+    }
 }
 var monstersCaught = 0;
 
@@ -165,6 +194,13 @@ function keyUp(){ return (checkKey(38) || checkKey(87)); };
 function keyDown(){ return (checkKey(40) || checkKey(83)); };
 function keyLeft(){ return (checkKey(37) || checkKey(65)); };
 function keyRight(){ return (checkKey(39) || checkKey(68)); };
+var noKeysPressed = () => {
+    if (Object.keys(keysDown).length === 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 var isShiftPressed = false; //for sprint action
 // Update game objects
