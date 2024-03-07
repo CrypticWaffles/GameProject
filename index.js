@@ -15,6 +15,8 @@ var {
     monster
 } = monst;
 
+var stopgame = false; //used to stop the game (for gameover).
+
 // The main game loop
 var main = function () {
     var now = Date.now();
@@ -23,11 +25,13 @@ var main = function () {
     render();
     then = now;
     //  Request to do this again ASAP
-    requestAnimationFrame(main);
+    if(!stopgame){requestAnimationFrame(main)}
+    else{flashover();};
 };
 
-var timer = false;
-var count = 60;
+var timer = false; //used in the countdown timer
+var count = 60; //the countdown itself
+var a = true;
 
 var render = function () {
     if (bgReady) {
@@ -80,6 +84,34 @@ var render = function () {
     }
 }
 
+//flashes gameover screen
+function flashover(){
+    if(a == true){
+        ctx.fillStyle = "rgb(250, 0, 0)";
+        ctx.font = "128px Helvetica";
+        ctx.textAlign = "top";
+        ctx.textBaseline = "left";
+        ctx.fillText("Gameover", 200, 500);
+        
+        ctx.fillStyle = "rgb(250, 250, 250)";
+        ctx.font = "64px Helvetica";
+        ctx.textAlign = "top";
+        ctx.textBaseline = "left";
+        ctx.fillText("(Refresh to restart!)", 210, 615);
+
+        a = false;
+    }
+    else{
+        ctx.fillStyle = "rgb(0, 250, 0)";
+        ctx.font = "128px Helvetica";
+        ctx.textAlign = "top";
+        ctx.textBaseline = "left";
+        ctx.fillText("Gameover", 200, 500);
+        a = true;
+    }
+    requestAnimationFrame(flashover);
+}
+
 //timer logic
 function sixtysec() {
     var countdown = setInterval(function() {
@@ -90,11 +122,11 @@ function sixtysec() {
         }
         if (count <= 0) {
             clearInterval(countdown);
-            //>>>>>gameover<<<<<
+            stopgame = true;
         }
     }, 1000);
 }
-window.addEventListener('load', (event) => {sixtysec();});
+window.addEventListener('load', (event) => {sixtysec(); });
 
 // Game objects
 var hero = {
