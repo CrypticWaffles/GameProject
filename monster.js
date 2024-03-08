@@ -9,18 +9,23 @@ var monster = {
         y: Math.round((Math.random() * 1000))
     },
     targetsLost: 0,
+    orientation: 1,
 
     moveUp: function () {
         this.y -= 2;
+        this.orientation = 1;
     },
     moveDown: function () {
         this.y += 2;
+        this.orientation = 2;
     },
     moveLeft: function () {
         this.x -= 2;
+        this.orientation = 3;
     },
     moveRight: function () {
         this.x += 2;
+        this.orientation = 4;
     },
     newTarget: function () {
         this.target.x = Math.round((Math.random() * 1000));
@@ -30,8 +35,8 @@ var monster = {
         this.targetsLost++;
     },
     calcDistance: function (){ //how far the monster has to move to reach the random point
-        this.dx = this.target.x - this.x;
-        this.dy = this.target.y - this.y;
+        this.dx = Math.abs(this.target.x - this.x);
+        this.dy = Math.abs(this.target.y - this.y);
     }
 }
 
@@ -60,7 +65,7 @@ function moveMonster(){
     const dy = Math.abs(Math.round(monster.target.y - monster.y));
 
     if(dx <= 3 && dy <= 3){
-        // If the monster is within 30 units of its target, respawn or set a new target
+        // If the monster is within 30 units of its target, set a new target
         monster.newTarget();
         return;
     }else{

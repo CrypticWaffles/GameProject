@@ -32,17 +32,7 @@ var main = function () {
 var timer = false; //used in the countdown timer
 var count = 60; //the countdown itself
 var a = true;
-
-function flipImage(image, ctx, flipH, flipV) {
-    var scaleH = flipH ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
-        scaleV = flipV ? -1 : 1, // Set verical scale to -1 if flip vertical
-        posX = width * -1 // Set x position to -100% if flip horizontal 
-    
-    ctx.save(); // Save the current state
-    ctx.scale(-1, 1); // Set scale to flip the image
-    ctx.drawImage(img, -32, 0, 32, 32); // draw the image
-    ctx.restore(); // Restore the last saved state
-};
+var flip = false; //whether to flip the hero sprite or not
 
 var render = function () {
     if (bgReady) {
@@ -60,6 +50,7 @@ var render = function () {
         ctx.drawImage(heroImage, hero.x, hero.y);
     }
     if (monsterReady) {
+        monsterImage.src = `/images/monster/${monster.orientation}.png`;
         ctx.drawImage(monsterImage, monster.x, monster.y);
     }
     if (targetReady) {
@@ -80,6 +71,8 @@ var render = function () {
     ctx.textBaseline = "top";
     ctx.fillText("Targets Lost: " + monster.targetsLost, 32, 64);
 
+    triangulation();
+
     //logic for the timer
     if(monster.targetsLost > monstersCaught){ //activates if hero is losing
         timer = true;
@@ -92,6 +85,41 @@ var render = function () {
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
         ctx.fillText(`Countdown: ${count}`, 32, 96);
+    }
+}
+
+//for displaying the pathfinding
+function triangulation() {
+    const targetX = monster.target.x + 32 / 2;
+    const targetY = monster.target.y + 32 / 2;
+    if(monster.dx <= monster.dy){
+        ctx.setLineDash([10, 10]);
+        ctx.globalAlpha = 0.25;
+        const originX = monster.x + 56 / 2;
+        const originY = monster.y + 24 / 2;
+
+        ctx.beginPath();
+        ctx.moveTo(originX, originY); // Start from the current position of the monster
+        ctx.lineTo(targetX, originY); // Draw a line to the target position along the horizontal axis
+        ctx.lineTo(targetX, targetY); // Draw a line to the target position
+        ctx.strokeStyle = 'red'; // Set the color of the line
+        ctx.lineWidth = 10; // Set the width of the line
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+    }else{
+        ctx.setLineDash([10, 10]);
+        ctx.globalAlpha = 0.25;
+        const originX = monster.x + 24 / 2;
+        const originY = monster.y + 56 / 2;
+
+        ctx.beginPath();
+        ctx.moveTo(originX, originY); // Start from the current position of the monster
+        ctx.lineTo(originX, targetY); // Draw a line to the target position along the vertical axis
+        ctx.lineTo(targetX, targetY); // Draw a line to the target position
+        ctx.strokeStyle = 'red'; // Set the color of the line
+        ctx.lineWidth = 10; // Set the width of the line
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
     }
 }
 
@@ -152,7 +180,11 @@ var hero = {
     y: 0,  // where on the canvas are they?
     image: 1,
     updateSprite: function () {
-        heroImage.src = `images/character/${this.image}.png`;
+        if(flip){
+            heroImage.src = `images/character/${this.image}f.png`;
+        }else{
+            heroImage.src = `images/character/${this.image}.png`;
+        }
         console.log(`images/character/${this.image}.png`)
         if(this.image < 8){
             this.image++;
@@ -214,9 +246,11 @@ var update = function (modifier) {
     }
     if (keyLeft() && hero.x > (32+4)) { // holding left keys
         hero.x -= heroMults;
+        if(!flip){flip = true};
     }
     if (keyRight() && hero.x < canvas.width - (64 + 6)) { // holding right keys
         hero.x += heroMults;
+        if(flip){flip = false};
     }
 
     moveMonster();
