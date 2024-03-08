@@ -109,7 +109,6 @@ function flashover(){
         ctx.textAlign = "top";
         ctx.textBaseline = "left";
         ctx.fillText("(Refresh to restart!)", 210, 615);
-
         a = false;
     }
     else{
@@ -123,9 +122,8 @@ function flashover(){
     requestAnimationFrame(flashover);
 }
 
-//timer logic
 function intervals() {
-    var countdown = setInterval(function() {
+    var countdown = setInterval(function() { //the timer
         if(timer){
             count--;
         }else{
@@ -137,7 +135,7 @@ function intervals() {
         }
     }, 1000);
 
-    var spriteFrame = setInterval(function() {
+    var spriteFrame = setInterval(function() { //the sprite animation
         if(!noKeysPressed()){
             hero.updateSprite();
         }else{
