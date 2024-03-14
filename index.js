@@ -1,19 +1,141 @@
-import * as setup from "./setup.js";
-import * as monst from "./monster.js";
-import { moveMonster } from "./monster.js";
+var monster = {
+    speed: 256, // movement in pixels per second
+    x: 0,  // where on the canvas are they?
+    y: 0,  // where on the canvas are they?
+    dx: 0, // x distance from target
+    dy: 0, // y distance from target
+    target: {
+        x: Math.round((Math.random() * 1000)),
+        y: Math.round((Math.random() * 1000))
+    },
+    targetsLost: 0,
+    orientation: 1,
 
-var {
-    canvas, ctx,
-    bgReady, bgImage,
-    edgReady, edgImage, edg2Ready, edg2Image,
-    heroReady, heroImage,
-    monsterReady, monsterImage,
-    targetReady, targetImage
-} = setup;
+    moveUp: function () {
+        this.y -= 2;
+        this.orientation = 1;
+    },
+    moveDown: function () {
+        this.y += 2;
+        this.orientation = 2;
+    },
+    moveLeft: function () {
+        this.x -= 2;
+        this.orientation = 3;
+    },
+    moveRight: function () {
+        this.x += 2;
+        this.orientation = 4;
+    },
+    newTarget: function () {
+        this.target.x = Math.round((Math.random() * 1000));
+        this.target.y = Math.round((Math.random() * 1000));
+        var audio = new Audio('sounds/click.mp3');
+        audio.play();
+        this.targetsLost++;
+    },
+    calcDistance: function (){ //how far the monster has to move to reach the random point
+        this.dx = Math.abs(this.target.x - this.x);
+        this.dy = Math.abs(this.target.y - this.y);
+    }
+}
 
-var {
-    monster
-} = monst;
+function moveHorizontal(dx, dy) {
+    // If moving horizontally is shorter or equal and distance is greater than 30
+    if (monster.target.x < monster.x) {
+        monster.moveLeft();
+    } else if (monster.target.x > monster.x) {
+        monster.moveRight();
+    }
+    monster.calcDistance();
+}
+
+function moveVertical(dx, dy) {
+    // If moving vertically is shorter and distance is greater than 30
+    if (monster.target.y < monster.y) {
+        monster.moveUp();
+    } else if (monster.target.y > monster.y) {
+        monster.moveDown();
+    }
+    monster.calcDistance();
+}
+
+function moveMonster(){
+    const dx = Math.abs(Math.round(monster.target.x - monster.x));
+    const dy = Math.abs(Math.round(monster.target.y - monster.y));
+
+    if(dx <= 3 && dy <= 3){
+        // If the monster is within 30 units of its target, set a new target
+        monster.newTarget();
+        return;
+    }else{
+        if(dx<=dy && dx>3){
+            moveHorizontal(dx, dy);
+        }
+        else if (dx>dy && dy<=3){
+            moveHorizontal(dx, dy);
+        }
+        else if(dx<=dy && dx<=3){
+            moveVertical(dx, dy);
+        }
+        else if(dy<=dx && dy>3){
+            moveVertical(dx, dy);
+        }
+    }
+}
+
+// Canvas creation
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext("2d");
+canvas.width = 1000;
+canvas.height = 1000;
+document.body.appendChild(canvas);
+/* Canvas Coordinates Cheat Sheet
+ * ------------------------------
+ * Top-left: (0, 0)
+ * Bottom-left: (0, 1000)
+ * Top-right: (1000, 0)
+ * Bottom-right: (1000, 1000)
+ * Center: (500, 500)
+ */
+
+// Images
+// Background Image
+var bgReady = true;
+var bgImage = new Image();
+bgImage.src = "./images/SpaceBG.png";
+
+//Edges
+// Background Image
+var edgReady = false;
+var edgImage = new Image();
+edgImage.onload = function () {
+    edgReady = true;
+}
+//edgImage.src = "images/border1.png";
+
+// Background Image
+var edg2Ready = false;
+var edg2Image = new Image();
+edg2Image.onload = function () {
+    edg2Ready = true;
+}
+//edg2Image.src = "images/.png";
+
+// Hero Image
+var heroReady = true;
+var heroImage = new Image();
+heroImage.src = "./images/character/1.png";
+
+// Monster image
+var monsterReady = true;
+var monsterImage = new Image();
+monsterImage.src = "./images/monster.png";
+
+// Target image
+var targetReady = true;
+var targetImage = new Image();
+targetImage.src = "./images/target.png";
 
 var stopgame = false; //used to stop the game (for gameover).
 
@@ -50,7 +172,7 @@ var render = function () {
         ctx.drawImage(heroImage, hero.x, hero.y);
     }
     if (monsterReady) {
-        monsterImage.src = `/images/monster/${monster.orientation}.png`;
+        monsterImage.src = `./images/monster/${monster.orientation}.png`;
         ctx.drawImage(monsterImage, monster.x, monster.y);
     }
     if (targetReady) {
@@ -181,11 +303,11 @@ var hero = {
     image: 1,
     updateSprite: function () {
         if(flip){
-            heroImage.src = `images/character/${this.image}f.png`;
+            heroImage.src = `./images/character/${this.image}f.png`;
         }else{
-            heroImage.src = `images/character/${this.image}.png`;
+            heroImage.src = `./images/character/${this.image}.png`;
         }
-        console.log(`images/character/${this.image}.png`)
+        console.log(`./images/character/${this.image}.png`)
         if(this.image < 8){
             this.image++;
         }else{
